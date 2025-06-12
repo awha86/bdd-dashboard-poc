@@ -9,20 +9,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: temurin
+          java-version: 17
 
       - name: Install Allure CLI
         run: |
-          curl -o allure-2.34.0.tgz -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.tgz
-          tar -xzf allure-2.34.0.tgz
+          curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.tgz
+          tar -xzf allure.tgz
           sudo mv allure-2.34.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
           allure --version
@@ -32,6 +33,12 @@ jobs:
           mkdir -p allure-results
           latest_dir=$(ls -td data/integration/results_* | head -1)
           cp -r "$latest_dir"/* allure-results/
+
+      - name: Restore previous history (if available)
+        run: |
+          if [ -d allure-report/history ]; then
+            cp -r allure-report/history allure-results/history
+          fi
 
       - name: Generate Allure HTML report
         run: |
