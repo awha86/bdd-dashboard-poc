@@ -22,8 +22,10 @@ jobs:
       - name: Install Allure CLI
         run: |
           curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.tgz
-          tar -xzf allure.tgz
-          sudo mv allure-2.34.0/bin/allure /usr/local/bin/allure
+          tar -xzf allure-2.34.0.tgz
+          sudo mv allure-2.34.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
+          allure --version
 
       - name: Copy latest results to allure-results/
         run: |
