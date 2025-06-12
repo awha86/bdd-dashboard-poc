@@ -1,0 +1,43 @@
+name: Build Allure Dashboard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Allure CLI
+        run: |
+          curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.tgz
+          tar -xzf allure.tgz
+          sudo mv allure-2.34.0/bin/allure /usr/local/bin/allure
+
+      - name: Copy latest results to allure-results/
+        run: |
+          mkdir -p allure-results
+          latest_dir=$(ls -td data/integration/results_* | head -1)
+          cp -r "$latest_dir"/* allure-results/
+
+      - name: Generate Allure HTML report
+        run: |
+          allure generate allure-results --clean -o allure-report
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-report
+          publish_branch: gh-pages
