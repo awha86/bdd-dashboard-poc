@@ -2,7 +2,7 @@ name: Build Allure Dashboard
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - 'data/**'
 
