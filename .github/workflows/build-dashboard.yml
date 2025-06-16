@@ -9,10 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
@@ -25,26 +23,29 @@ jobs:
           tar -xzf allure.tgz
           sudo mv allure-2.34.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
+          allure --version
 
-      - name: Collect latest results + history
+      - name: Copy latest results to allure-results/
         run: |
           mkdir -p allure-results
           latest=$(ls -td data/integration/results_* | head -1)
           cp -r "$latest"/* allure-results/
 
-          # bring over history folder if exists
-          if [ -d data/integration/history ]; then
+      - name: Restore previous history (fra .history/)
+        run: |
+          if [ -d .history ]; then
             mkdir -p allure-results/history
-            cp -r data/integration/history/* allure-results/history/
+            cp -r .history/* allure-results/history/
           fi
 
-      - name: Generate report & extract history
+      - name: Generate report (inklusive historik)
         run: |
-          allure generate allure-results -o allure-report --clean-history
-          # Extract for next run
-          rm -rf data/integration/history
-          mkdir -p data/integration/history
-          cp -r allure-report/history/* data/integration/history/
+          allure generate allure-results --clean -o allure-report
+
+      - name: Save history for næste run
+        run: |
+          mkdir -p .history
+          cp -r allure-report/history/* .history/ || true
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
