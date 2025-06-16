@@ -9,10 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Java (Allure-generering)
+      - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: temurin
@@ -20,33 +21,32 @@ jobs:
 
       - name: Install Allure CLI
         run: |
-          curl -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.tgz -o allure.tgz
+          curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.tgz
           tar -xzf allure.tgz
-          mv allure-2.34.0 /opt/allure
-          ln -s /opt/allure/bin/allure /usr/local/bin/allure
-          allure --version
+          sudo mv allure-2.34.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
 
-      - name: Prepare allure-results + history
+      - name: Collect latest results + history
         run: |
           mkdir -p allure-results
           latest=$(ls -td data/integration/results_* | head -1)
           cp -r "$latest"/* allure-results/
+
+          # bring over history folder if exists
           if [ -d data/integration/history ]; then
+            mkdir -p allure-results/history
             cp -r data/integration/history/* allure-results/history/
-          elif [ -d persisted-history ]; then
-            cp -r persisted-history/* allure-results/history/
           fi
 
-      - name: Generate HTML report (med historie)
-        run: allure generate allure-results --clean -o allure-report
-
-      - name: Save history
+      - name: Generate report & extract history
         run: |
-          mkdir -p persisted-history
-          cp -r allure-report/history/* persisted-history/ || true
-          tar -cvf persisted-history.tar persisted-history/
+          allure generate allure-results -o allure-report --clean-history
+          # Extract for next run
+          rm -rf data/integration/history
+          mkdir -p data/integration/history
+          cp -r allure-report/history/* data/integration/history/
 
-      - name: Deploy to gh-pages
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
