@@ -10,11 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
       - name: Checkout main branch
         uses: actions/checkout@v4
 
-      - name: Load previous GH‑Pages history
+      - name: Load previous history from gh‑pages
         uses: actions/checkout@v4
         with:
           ref: gh-pages
@@ -22,7 +21,7 @@ jobs:
         continue-on-error: true
 
       - name: Build Allure report with history
-        uses: simple-elf/allure‑report-action@v1.12
+        uses: simple-elf/allure-report-action@master
         with:
           allure_results: "allure-results"
           gh_pages: "gh-pages"
