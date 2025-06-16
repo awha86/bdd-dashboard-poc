@@ -36,19 +36,19 @@ jobs:
 
       - name: Restore previous history (if available)
         run: |
-          if [ -d persisted-history ]; then
+          if [ -d allure-report/history ]; then
             mkdir -p allure-results/history
-            cp -r persisted-history/* allure-results/history/
+            cp -r allure-report/history/* allure-results/history/ || true
           fi
 
       - name: Generate Allure HTML report
         run: |
-          allure generate allure-results -o allure-report --clean-history
+          allure generate allure-results -o allure-report --clean
 
-      - name: Save current history for next run
+      - name: Persist new history for next run
         run: |
-          mkdir -p persisted-history
-          cp -r allure-report/history/* persisted-history/ || true
+          mkdir -p allure-report/history
+          # nothing to do – generated report already has updated history
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
