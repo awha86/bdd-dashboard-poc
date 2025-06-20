@@ -1,0 +1,43 @@
+name: Build Allure Dashboard
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'data/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install Allure CLI
+        run: |
+          curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.tgz
+          tar -xzf allure.tgz
+          sudo mv allure-2.34.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
+
+      - name: List result folders
+        run: |
+          echo "Checking contents of data/integration"
+          ls -lR data/integration
+
+      - name: Generate Allure report
+        run: |
+          allure generate data/integration --clean -o allure-report
+
+      - name: Copy Allure report to root
+        run: |
+          cp -r allure-report/. .
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_branch: gh-pages
+          exclude_assets: ''
