@@ -30,8 +30,14 @@ jobs:
         run: |
           allure generate data/integration --clean -o allure-report
 
+      - name: Copy Allure report to root
+        run: |
+          cp -r allure-report/. .
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report
+          publish_dir: .
+          publish_branch: gh-pages
+          exclude_assets: ''
