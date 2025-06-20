@@ -14,19 +14,14 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up Java
-        uses: actions/setup-java@v3
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          distribution: temurin
-          java-version: 17
+          python-version: "3.11"
 
-      - name: Install Allure CLI
+      - name: Install dependencies
         run: |
-          curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.tgz
-          tar -xzf allure.tgz
-          sudo mv allure-2.34.0 /opt/allure
-          sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
-          allure --version
+          pip install -r requirements.txt
 
       - run: |
           allure generate data/integration --clean -o allure-report
