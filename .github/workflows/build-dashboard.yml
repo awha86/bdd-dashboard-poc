@@ -21,11 +21,13 @@ jobs:
           sudo mv allure-2.34.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
 
-      - run: |
+      - name: List result folders
+        run: |
           echo "Checking contents of data/integration"
           ls -lR data/integration
-      
-      - run: |
+
+      - name: Generate Allure report
+        run: |
           allure generate data/integration --clean -o allure-report
 
       - name: Deploy to GitHub Pages
@@ -34,3 +36,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-report
           publish_branch: gh-pages
+          exclude_assets: ''
