@@ -14,15 +14,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
+      - name: Install Allure CLI
         run: |
-          pip install -r requirements.txt
-
+          curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.tgz
+          tar -xzf allure.tgz
+          sudo mv allure-2.34.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
+          
       - run: |
           allure generate data/integration --clean -o allure-report
 
