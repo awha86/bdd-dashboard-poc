@@ -1,5 +1,5 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"/home/runner/work/bdd-test-poc/bdd-test-poc/features/example.feature: Basic subtraction","1","test_basic_subtraction","tests","Mon Jun 16 13:21:38 UTC 2025","passed","Mon Jun 16 13:21:38 UTC 2025","","test_example","",""
 "/home/runner/work/bdd-test-poc/bdd-test-poc/features/example.feature: Basic addition","1","test_basic_addition","tests","Mon Jun 16 13:21:38 UTC 2025","passed","Mon Jun 16 13:21:38 UTC 2025","","test_example","",""
-"","0","Basic addition","","Mon Jun 30 08:49:06 UTC 2025","passed","Mon Jun 30 08:49:06 UTC 2025","","","",""
-"","1","Basic subtraction","","Mon Jun 30 08:49:06 UTC 2025","passed","Mon Jun 30 08:49:06 UTC 2025","","","",""
+"/home/runner/work/bdd-test-poc/bdd-test-poc/features/example.feature: Basic subtraction","1","test_basic_subtraction","tests","Mon Jun 16 13:21:38 UTC 2025","passed","Mon Jun 16 13:21:38 UTC 2025","","test_example","",""
+"","1","Basic addition","","Mon Jun 30 08:52:26 UTC 2025","failed","Mon Jun 30 08:52:26 UTC 2025","","","",""
+"","1","Basic subtraction","","Mon Jun 30 08:52:26 UTC 2025","passed","Mon Jun 30 08:52:26 UTC 2025","","","",""
