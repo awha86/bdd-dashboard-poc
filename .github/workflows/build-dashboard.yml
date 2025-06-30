@@ -11,13 +11,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout master branch
         uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 1
+
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}
+          ref: gh-pages
+          path: pages
+          fetch-depth: 1
 
       - name: Install Java
         run: |
-            sudo apt-get update
-            sudo apt-get install -y openjdk-11-jre-headless
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jre-headless
 
       - name: Install Allure CLI
         run: |
@@ -28,17 +39,22 @@ jobs:
 
       - name: List result folders
         run: |
-          echo "Checking contents of data/integration"
+          echo "=== data/integration-indhold ==="
           ls -lR data/integration
+
+      - name: Copy previous history into results
+        run: |
+          mkdir -p data/integration/history
+          cp -r pages/allure-report/history/* data/integration/history/
 
       - name: Generate Allure report
         run: |
-            echo "=== Listing data/integration folders ==="
-            ls -lR data/integration
-            echo "=== Generating Allure report from all sub-folders ==="
-            allure generate data/integration/* --clean -o allure-report
-  
-      - name: Copy Allure report to root
+          echo "=== data/integration med historie ==="
+          ls -lR data/integration
+          echo "=== Generating Allure report ==="
+          allure generate data/integration/* --clean -o allure-report
+
+      - name: Copy report to root
         run: |
           cp -r allure-report/. .
 
