@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Hent tests-data fra master/main
+      # 1) Hent kun din kode fra master/main
       - name: Checkout code (master)
         uses: actions/checkout@v4
         with:
@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 1
           submodules: false
 
-      # 2) Manuel gh-pages-fetch (ingen submodules)
+      # 2) Manuel fetch af gh-pages til pages-mappen (ingen checkout@v4 her)
       - name: Fetch gh-pages history
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
