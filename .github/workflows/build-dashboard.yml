@@ -33,7 +33,9 @@ jobs:
 
       - name: Generate Allure report
         run: |
-            ls data/integration
+            echo "=== Listing data/integration folders ==="
+            ls -lR data/integration
+            echo "=== Generating Allure report from all sub-folders ==="
             allure generate data/integration/* --clean -o allure-report
   
       - name: Copy Allure report to root
