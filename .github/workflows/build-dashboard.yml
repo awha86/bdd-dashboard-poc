@@ -3,8 +3,6 @@ name: Build Allure Dashboard
 on:
   push:
     branches: [master]     # eller [main]
-    paths:
-      - 'data/**'
 
 jobs:
   build:
