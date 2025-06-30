@@ -2,7 +2,7 @@ name: Build Allure Dashboard
 
 on:
   push:
-    branches: [master]
+    branches: [master]     # eller [main] hvis I bruger main
     paths:
       - 'data/**'
 
@@ -11,26 +11,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout master branch
+      # 1) Hent data/integration fra master/main
+      - name: Checkout code (master)
         uses: actions/checkout@v4
         with:
-          ref: master
-          fetch-depth: 1
-
-      - name: Checkout gh-pages branch
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ github.repository }}
-          ref: gh-pages
-          path: pages
+          ref: master         # eller main
           fetch-depth: 1
           submodules: false
 
+      # 2) Hent historik fra gh-pages manuelt til pages-mappen
+      - name: Fetch gh-pages history
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir pages
+          cd pages
+          git init .
+          git remote add origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
+          git fetch --depth=1 origin gh-pages
+          git checkout origin/gh-pages
+
+      # 3) Installér Java (Allure krav)
       - name: Install Java
         run: |
           sudo apt-get update
           sudo apt-get install -y openjdk-11-jre-headless
 
+      # 4) Installér Allure CLI
       - name: Install Allure CLI
         run: |
           curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.tgz
@@ -38,16 +45,19 @@ jobs:
           sudo mv allure-2.34.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
 
+      # 5) Debug: vis de nye JSON-resultater
       - name: List result folders
         run: |
           echo "=== data/integration-indhold ==="
           ls -lR data/integration
 
+      # 6) Copy historik ind i resultaterne
       - name: Copy previous history into results
         run: |
           mkdir -p data/integration/history
           cp -r pages/allure-report/history/* data/integration/history/
 
+      # 7) Generér ny rapport (inkl. historie)
       - name: Generate Allure report
         run: |
           echo "=== data/integration med historie ==="
@@ -55,10 +65,12 @@ jobs:
           echo "=== Generating Allure report ==="
           allure generate data/integration/* --clean -o allure-report
 
+      # 8) Flyt rapport til root for GitHub Pages
       - name: Copy report to root
         run: |
           cp -r allure-report/. .
 
+      # 9) Deploy til GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
