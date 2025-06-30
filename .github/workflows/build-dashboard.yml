@@ -2,7 +2,7 @@ name: Build Allure Dashboard
 
 on:
   push:
-    branches: [master]     # Skift til [main] hvis I bruger main
+    branches: [master]     # eller [main]
     paths:
       - 'data/**'
 
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Hent kun din kode fra master/main
+      # 1) Hent kode fra master/main
       - name: Checkout code (master)
         uses: actions/checkout@v4
         with:
@@ -19,17 +19,12 @@ jobs:
           fetch-depth: 1
           submodules: false
 
-      # 2) Manuel fetch af gh-pages til pages-mappen (ingen checkout@v4 her)
+      # 2) Hent historik med git clone i pages/
       - name: Fetch gh-pages history
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mkdir pages
-          cd pages
-          git init
-          git remote add origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
-          git fetch --depth=1 origin gh-pages
-          git checkout --detach FETCH_HEAD
+          git clone --depth=1 --branch gh-pages https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git pages
 
       # 3) Installér Java
       - name: Install Java
