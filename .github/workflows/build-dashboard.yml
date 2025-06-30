@@ -14,6 +14,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Install Java
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y openjdk-11-jre-headless
+
       - name: Install Allure CLI
         run: |
           curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.tgz
@@ -28,8 +33,9 @@ jobs:
 
       - name: Generate Allure report
         run: |
-          allure generate data/integration --clean -o allure-report
-
+            ls data/integration
+            allure generate data/integration/* --clean -o allure-report
+  
       - name: Copy Allure report to root
         run: |
           cp -r allure-report/. .
