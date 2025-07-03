@@ -28,9 +28,19 @@ jobs:
           sudo mv allure-2.34.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
 
-      - name: Generate Allure report
+      - name: Fetch previous Allure history
         run: |
-          allure generate data/integration/* -o allure-report
+          git fetch origin gh-pages:gh-pages
+          mkdir -p history
+          git --work-tree=history checkout gh-pages -- allure-report/history
+
+      - name: Generate Allure report (with history)
+        run: |
+          allure generate \
+            --clean \
+            --history history/allure-report/history \
+            data/integration/* \
+            -o allure-report          
 
       - name: Copy report to root
         run: |
