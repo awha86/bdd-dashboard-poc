@@ -42,6 +42,13 @@ jobs:
             data/integration/* \
             -o allure-report  
 
+      - name: Disable browser caching via meta-tags
+        run: |
+          sed -i '/<head>/a \
+            <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>\
+            <meta http-equiv="Pragma" content="no-cache"/>\
+            <meta http-equiv="Expires" content="0"/>' allure-report/index.html
+
       - name: Copy report to root
         run: |
           cp -r allure-report/. .
