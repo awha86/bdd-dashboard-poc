@@ -32,15 +32,15 @@ jobs:
         run: |
           git fetch origin gh-pages:gh-pages
           mkdir -p history
-          git --work-tree=history checkout gh-pages -- allure-report/history
+          git --work-tree=history checkout gh-pages -- history
 
       - name: Generate Allure report (with history)
         run: |
           allure generate \
             --clean \
-            --history history/allure-report/history \
+            --history history \
             data/integration/* \
-            -o allure-report          
+            -o allure-report  
 
       - name: Copy report to root
         run: |
